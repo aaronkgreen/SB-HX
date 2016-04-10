@@ -1,0 +1,57 @@
+﻿<header>
+    <div class="content-wrapper">
+        <div class="float-left">
+            <p class="site-title">A Simple User Dashboard</p>
+            <br />
+        </div>
+    </div>
+</header>
+
+<div id="body">
+    <ul id="UserAPI"></ul>
+</div>
+
+<form id="saveForm" method="post">
+    <h3>Create a USER</h3>
+        <p>
+            <label for="UserID">UserID:</label>
+            <input type="text" name="UId" />
+        </p>
+
+        <p>
+            <label for="UserFN">First Name:</label>
+            <input type="text" name="FName" />
+        </p>
+        
+        <p>
+            <label for="UserSN">Surname:</label>
+            <input type="text" name="SName" />
+        </p>
+
+        <p>
+            <label for="UserEM">EMail:</label>
+            <input type="text" name="Email" />
+        </p>
+    
+    <input type="button" id="AddUser" value="Save" />
+</form>
+
+@section scripts{
+    <script type="text/javascript">
+        // Funtion that gets the contents of the User API and list them on the page.
+        $( function () {
+            $.getJSON('/api/UserAPI', function ( contactsJsonPayload ) {
+                $( contactsJsonPayload ).each( function ( iter, value ) {
+                    $('#UserAPI').append('<li>' + value.UId + ' (' + value.Email + ')' + ' - ' +
+                        value.CrDate + '</li>');
+                } );
+            } );
+        } );
+
+        // Function for posting the form information.
+        $('#AddUser').click( function () {
+            $.post("/api/UserAPI", $("#saveForm").serialize(), function ( value ) {}, "json");
+        });
+
+</script>
+}
