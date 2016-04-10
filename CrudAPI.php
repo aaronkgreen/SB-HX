@@ -1,7 +1,7 @@
 <?php
 // 09/04/2016 - File created.
 
-abstract class CCrud
+abstract class CCrudAPI
 {
 	// Global variable for the HTTP CRUD state.
     protected $gHttpReqMethod = '';
@@ -26,6 +26,38 @@ abstract class CCrud
 		$this->_ReasignURL( $urlReq );
 		$this->_SelectCRUDState();
 		$this->_DoURLSanitization( $urlReq );
+    }
+	
+	// This is the function called by the non-abstracted classes. 
+	public function FireAPI() {
+        if ( method_exists( $this, $this->gModel ) ) {   
+			return $this->_response( $this->{$this->gModel }( $this->argArray ));
+        }
+    }
+	
+	// The response class that takes the header info and moves the process forward.
+    private function _response( $data, $status = 200 ) {
+        header( "HTTP/1.1 " . $status . " " . $this->_requestStatus( $status ) );
+        return json_encode( $data );
+    }
+	
+	// Using the status code, return the status.  A perfect implementation would have a more diverse range of codes
+	// 	however, this would take too much time given the current scope.
+	private function _GetStatus( $sCode ) {
+            if ( $sCode !== NULL ) {
+
+                switch ( $sCode ) {
+					case 200: 
+						$text = 'OK'; 
+					break;
+					
+					case 505: 
+						$text = 'HTTP Version not supported'; 
+					break;
+				}
+			}
+		
+        return ( $text ); 
     }
 
 	// Take the URL, break it down and reasign to variables as required.
@@ -58,41 +90,50 @@ abstract class CCrud
 
         switch( this->gHttpReqMethod ) {
 				
-		// Create
-		case 'POST':
-			echo "Post request";	
-			$input = Array();
-			
-			if ( is_array( $_POST ) ) {
-				foreach( $_POST as $arraykey => $arrayVal ) {
-					// Not 100% sure about how to achieve what I want here.  I want to sanatize but how?
-					// 	will need to go away and ponder or do some research.
-				}
-			} else {
-				$input = trim( strip_tags( $_POST ) );
-			}
-			
+			// Create
+			case 'POST':
+				echo "Post request";	
+				_DoInputSanitization( $_POST );
+			break;
+					
+			// Read
+			case 'GET':
+				echo "get request";
+				_DoInputSanitization( $_GET );	
 			break;
 				
-		// Read
-		case 'GET':
-			echo "get request";
+			// Update
+			case 'PUT':
+				echo "put request";
+				// Come back to this, the implemtation I've taken elsewhere won't work (design flaw?).
+				
 			break;
-			
-		// Update
-		case 'PUT':
-			echo "put request";
+				
+			// Delete (unsuprisingly...)
+			case 'DELETE':
+				echo "delete request";
 			break;
-			
-		// Delete
-		case 'DELETE':
-			echo "delete request";
-			break;
-			
-		default:
-			// Do nothing.
-			// Eventually I'll want an error message of some kind here.
+				
+			default:
+				// Do nothing.
+				// I'll want an error message of some kind here, time willing.
 			break;
         }
     }
-}
+	
+	// Simply skirts aroung the array to keep the infotmation we are working with relevant.
+	private function _DoInputSanitization( $reqMethod ) {
+			
+		$input = Array();		
+		if ( is_array( reqMethod ) ) {
+			foreach( reqMethod as $arraykey => $arrayVal ) {
+				$input[ $arraykey ] = $this->_DoInputSanitization( $arrayVal );
+			}
+			
+		} else {
+			$input = trim( strip_tags( reqMethod ) );
+		}	
+				
+        return $input;
+    }
+} 

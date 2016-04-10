@@ -1,4 +1,8 @@
-10/05/2016 09:27 - Spent some time amending CrudAPI to reflect my original design, be in-line with 
-			my research and adhere to best practices.
-10/05/2016 08:20 - Backed the first version of CrudAPI.php up on GitHub.
-09/04/2016 13:20 - CrudAPI.php created as the abstract layer of an API.
+10/05/2016 10:54 AKG	CrudAPI.php is feature complete, just need to debug, test and implement an 
+				inherrited class and remove some echoes if successful.  I also 
+				need to step away and asses feasability as I have some concerns 
+				continuing down this route.
+10/05/2016 09:27 AKG	Spent some time amending CrudAPI to reflect my original design, be in-line with 
+				my research and adhere to best practices.
+10/05/2016 08:20 AKG	Backed the first version of CrudAPI.php up on GitHub.
+09/04/2016 13:20 AKG	CrudAPI.php created as the abstract layer of an API.
